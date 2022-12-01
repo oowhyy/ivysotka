@@ -13,19 +13,30 @@ export default class ResidentService {
 
 
 	}
-	static async deleteOne(id: string) {
-		const response = await axios.delete(`/api/residents/${id}`)
-			// .then(resp => console.log(resp.data))
-			.catch(err => console.log(err))
+	static async deleteOne(id?: string) {
+		if (!id) {
+			return { message: 'no id provided' }
+		}
+		try {
+			const response = await axios.delete(`/api/residents/${id}`)
+			console.log(response)
+			return response
+		} catch (error) {
+			console.log(error)
+		}
+
+
 	}
+
 	static async create(newResident: IResident) {
 		try {
-			axios.post('/api/residents', {
+			const response = await axios.post('/api/residents', {
 				name: newResident.name,
 				email: newResident.email,
 			})
+			console.log(response)
 		} catch (error) {
-
+			console.log(error)
 		}
 
 	}

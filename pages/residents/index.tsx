@@ -1,11 +1,11 @@
 
-import { IResident } from "../types/types";
+import { IResident } from "../../types/types";
 
 
 import { ChangeEvent, useEffect, useState } from "react";
 
-import ResidentService from "../server/services/ResidentService";
-import Layout from "../components/Layout";
+import ResidentService from "../../server/services/ResidentService";
+import Layout from "../../components/Layout";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -20,6 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Link from "next/link";
 
 
 export default function Residents() {
@@ -43,14 +44,14 @@ export default function Residents() {
 
 	const handleSubmitForm = async () => {
 		setOpen(false);
-		const newResident = { _id: 'auto', name: `Test ${residentFormData.name}`, email: `test${residentFormData.email}@mail.test` }
+		const newResident = { id: 'auto', name: residentFormData.name, email: residentFormData.email }
 		setResidentFormData({ name: '', email: '' })
-		ResidentService.create(newResident);
+		await ResidentService.create(newResident);
 		fetchResidents();
 	}
-	const handleDeleteResident = async (id: string) => {
+	const handleDeleteResident = async (id?: string) => {
 		// console.log(id)
-		ResidentService.deleteOne(id)
+		const res = await ResidentService.deleteOne(id)
 		fetchResidents();
 	}
 
@@ -126,18 +127,18 @@ export default function Residents() {
 							<TableBody>
 								{residentList.map((row) => (
 									<TableRow
-										key={row._id}
+										key={row.id}
 										sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 									>
-										<TableCell component="th" scope="row">{row._id}</TableCell>
+										<TableCell component="th" scope="row">{row.id}</TableCell>
 
-										<TableCell align="right">{row.name}</TableCell>
+										<TableCell align="right"><Link href={`/residents/${row.id}`}>{row.name}</Link></TableCell>
 										<TableCell align="right">{row.email}</TableCell>
 										<TableCell align="right">
 											<Button
 												disableElevation
 												variant="contained"
-												onClick={() => handleDeleteResident(row._id)}
+												onClick={() => handleDeleteResident(row.id)}
 											>
 												Удалить
 											</Button>

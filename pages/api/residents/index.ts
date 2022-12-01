@@ -1,19 +1,28 @@
-import dbConnect from '../../../server/lib/dbConnect'
 
+
+import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import ResidentController from '../../../server/controllers/residentController'
 import { IResident } from '../../../types/types';
 
+const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
 
-	await dbConnect()
 
 	switch (req.method) {
 		case 'GET':
-			return await ResidentController.getAll(req, res);
+			const residents = await prisma.resident.findMany()
+			return res.json(residents)
+		// return res.json(users)
+		// return await ResidentController.getAll(req, res);
 		case 'POST':
-			return await ResidentController.create(req, res);
+			const { body: data } = req;
+			const newUser = await prisma.resident.create({
+				data
+			})
+			return res.status(201).json(newUser)
+
+		// return await ResidentController.create(req, res);
 
 
 
@@ -21,4 +30,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			res.status(400).json({ message: 'error' })
 			break
 	}
+
 }
