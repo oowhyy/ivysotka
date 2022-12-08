@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IResident } from '../../types/types'
+import { IResident } from '../../src/types/types'
 export default class ResidentService {
 	static async getAll() {
 		try {

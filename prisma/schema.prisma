@@ -4,21 +4,56 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("MYSQL_DATABASE_URL_LOCAL")
+  url      = env("MYSQL_DATABASE_URL")
 }
 
-model Resident {
-  id    Int    @id @default(autoincrement()) @map("_id")
-  name  String @db.VarChar(255)
-  email String @db.VarChar(255)
+model bill {
+  idbills                   Int         @id @default(autoincrement())
+  date                      DateTime    @db.DateTime(0)
+  due_date                  DateTime    @db.DateTime(0)
+  title                     String      @default("no title") @db.VarChar(100)
+  total                     Decimal     @db.Decimal(15, 2)
+  bill_status_idbill_status Int
+  resident_idresidents      Int
+  bill_status               bill_status @relation(fields: [bill_status_idbill_status], references: [idbill_status], onUpdate: Restrict, map: "fk_bill_bill_status")
+  resident                  resident    @relation(fields: [resident_idresidents], references: [idresidents], onUpdate: Restrict, map: "fk_bill_resident1")
 
-  @@map("residents")
+  @@index([bill_status_idbill_status], map: "fk_bill_bill_status_idx")
+  @@index([resident_idresidents], map: "fk_bill_resident1_idx")
 }
 
-model Request {
-  id          Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  title       String @db.VarChar(100)
-  description String @db.Text
+model bill_status {
+  idbill_status Int    @id @default(autoincrement())
+  status        String @unique(map: "status_UNIQUE") @db.VarChar(100)
+  bill          bill[]
+}
 
-  @@map("requests")
+model request {
+  idrequests                      Int            @id @default(autoincrement())
+  date                            DateTime       @db.DateTime(0)
+  title                           String         @default("no title") @db.VarChar(200)
+  description                     String         @db.LongText
+  request_status_idrequest_status Int
+  resident_idresidents            Int
+  request_status                  request_status @relation(fields: [request_status_idrequest_status], references: [idrequest_status], onUpdate: Restrict, map: "fk_request_request_status1")
+  resident                        resident       @relation(fields: [resident_idresidents], references: [idresidents], onUpdate: Restrict, map: "fk_request_resident1")
+
+  @@index([request_status_idrequest_status], map: "fk_request_request_status1_idx")
+  @@index([resident_idresidents], map: "fk_request_resident1_idx")
+}
+
+model request_status {
+  idrequest_status Int       @id @default(autoincrement())
+  status           String    @unique(map: "status_UNIQUE") @db.VarChar(100)
+  request          request[]
+}
+
+model resident {
+  idresidents Int       @id @default(autoincrement())
+  name        String    @db.VarChar(200)
+  email       String    @unique(map: "email_UNIQUE") @default("no email") @db.VarChar(100)
+  flat_num    String    @db.VarChar(45)
+  phone_num   String    @db.VarChar(45)
+  bill        bill[]
+  request     request[]
 }
