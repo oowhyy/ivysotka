@@ -1,15 +1,20 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import prisma from "../../db/client";
 
-
-import { PrismaClient } from '@prisma/client';
-import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from '../../../db/client';
-
-// import prisma from "../../../db/client";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	switch (req.method) {
 		case 'GET':
-			const residents = await prisma.resident.findMany()
-			return res.json(residents)
+			const status = req.query.status;
+			console.log(status)
+			if (typeof status == 'string') {
+				const result = await prisma.bill_status.findFirst({ where: { status: status } })
+				if (result) {
+
+					return res.json(result)
+				}
+				return res.json({ message: `no status ${status} found` })
+			}
+			return res.json({ message: 'ok' })
 		// return res.json(users)
 		// return await ResidentController.getAll(req, res);
 		case 'POST':

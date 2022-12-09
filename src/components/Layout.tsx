@@ -1,9 +1,7 @@
 import Link from "next/link"
 
 
-type lp = {
-	children: React.ReactNode
-}
+
 export default function Layout({ children }: any) {
 	return (
 		<div style={{ margin: '10px' }}>
