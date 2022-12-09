@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IResident } from '../../src/types/types'
+import { IResident } from '../../types/types'
 export default class ResidentService {
 	static async getAll() {
 		try {
@@ -32,7 +32,9 @@ export default class ResidentService {
 		try {
 			const response = await axios.post('/api/residents', {
 				name: newResident.name,
-				email: newResident.email,
+				email: newResident.email || null,
+				flat_num: newResident.flat_num,
+				phone_num: newResident.phone_num
 			})
 			console.log(response)
 		} catch (error) {

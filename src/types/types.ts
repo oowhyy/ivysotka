@@ -1,5 +1,7 @@
 export interface IResident {
-	id: string
+	idresidents: string
 	name: string
 	email: string
+	flat_num: string
+	phone_num: string
 }

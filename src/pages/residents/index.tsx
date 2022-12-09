@@ -5,7 +5,7 @@ import { IResident } from "../../types/types";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import ResidentService from "../../server/services/ResidentService";
-import Layout from "../../components/Layout";
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -21,13 +21,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Link from "next/link";
+import Layout from "../../components/Layout";
+import NewResidentModal from "../../components/NewResidentModal";
 
 
 export default function Residents() {
 	const [residentList, setResidentList] = useState<IResident[]>([])
 	const [fetchError, setFetchError] = useState<string | null>('Загрузка')
 	const [open, setOpen] = useState(false);
-	const [residentFormData, setResidentFormData] = useState({ name: '', email: '' })
+	const [residentFormData, setResidentFormData] = useState({ name: '', email: '', phone_num: '', flat_num: '' })
 	useEffect(() => {
 		fetchResidents();
 	}, [])
@@ -44,8 +46,8 @@ export default function Residents() {
 
 	const handleSubmitForm = async () => {
 		setOpen(false);
-		const newResident = { id: 'auto', name: residentFormData.name, email: residentFormData.email }
-		setResidentFormData({ name: '', email: '' })
+		const newResident = { idresidents: 'auto', ...residentFormData }
+		setResidentFormData({ name: '', email: '', phone_num: '', flat_num: '' })
 		await ResidentService.create(newResident);
 		fetchResidents();
 	}
@@ -55,12 +57,10 @@ export default function Residents() {
 		fetchResidents();
 	}
 
-	function handleFormNameChange(e: ChangeEvent<HTMLInputElement>) {
-		setResidentFormData({ ...residentFormData, name: e.target.value })
+	function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
+		setResidentFormData({ ...residentFormData, [e.target.id]: e.target.value })
 	}
-	function handleFormEmailChange(e: ChangeEvent<HTMLInputElement>) {
-		setResidentFormData({ ...residentFormData, email: e.target.value })
-	}
+
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -75,42 +75,13 @@ export default function Residents() {
 			<Button variant="outlined" onClick={handleClickOpen}>
 				Добавить жильца
 			</Button>
-			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Форма добавления жильца</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						Подзаголовок
-					</DialogContentText>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label="Имя"
-						type="text"
-						fullWidth
-						variant="standard"
-						placeholder="Петя"
-						value={residentFormData.name}
-						onChange={handleFormNameChange}
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label="email"
-						type="text"
-						fullWidth
-						variant="standard"
-						placeholder="petya@mymail.com"
-						value={residentFormData.email}
-						onChange={handleFormEmailChange}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose}>Закрыть</Button>
-					<Button onClick={handleSubmitForm}>Записать</Button>
-				</DialogActions>
-			</Dialog>
+			<NewResidentModal
+				formData={residentFormData}
+				handleClose={handleClose}
+				handleSubmitForm={handleSubmitForm}
+				handleFormChange={handleFormChange}
+				open={open}
+			/>
 			<h1>Список жильцов</h1>
 			{
 				residentList.length ?
@@ -127,18 +98,18 @@ export default function Residents() {
 							<TableBody>
 								{residentList.map((row) => (
 									<TableRow
-										key={row.id}
+										key={row.idresidents}
 										sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 									>
-										<TableCell component="th" scope="row">{row.id}</TableCell>
+										<TableCell component="th" scope="row">{row.idresidents}</TableCell>
 
-										<TableCell align="right"><Link href={`/residents/${row.id}`}>{row.name}</Link></TableCell>
+										<TableCell align="right"><Link href={`/residents/${row.idresidents}`}>{row.name}</Link></TableCell>
 										<TableCell align="right">{row.email}</TableCell>
 										<TableCell align="right">
 											<Button
 												disableElevation
 												variant="contained"
-												onClick={() => handleDeleteResident(row.id)}
+												onClick={() => handleDeleteResident(row.idresidents)}
 											>
 												Удалить
 											</Button>
