@@ -9,17 +9,17 @@ datasource db {
 
 model bill {
   idbills                   Int         @id @default(autoincrement())
-  date                      DateTime    @db.DateTime(0)
+  date                      DateTime    @default(now()) @db.DateTime(0)
   due_date                  DateTime    @db.DateTime(0)
   title                     String      @default("no title") @db.VarChar(100)
   total                     Decimal     @db.Decimal(15, 2)
   bill_status_idbill_status Int
-  resident_idresidents      Int
+  flat_idflat               Int
   bill_status               bill_status @relation(fields: [bill_status_idbill_status], references: [idbill_status], onUpdate: Restrict, map: "fk_bill_bill_status")
-  resident                  resident    @relation(fields: [resident_idresidents], references: [idresidents], onUpdate: Restrict, map: "fk_bill_resident1")
+  flat                      flat        @relation(fields: [flat_idflat], references: [idflat], onUpdate: Restrict, map: "fk_bill_flat1")
 
   @@index([bill_status_idbill_status], map: "fk_bill_bill_status_idx")
-  @@index([resident_idresidents], map: "fk_bill_resident1_idx")
+  @@index([flat_idflat], map: "fk_bill_flat1_idx")
 }
 
 model bill_status {
@@ -52,8 +52,17 @@ model resident {
   idresidents Int       @id @default(autoincrement())
   name        String    @db.VarChar(200)
   email       String    @unique(map: "email_UNIQUE") @default("no email") @db.VarChar(100)
-  flat_num    String    @db.VarChar(45)
   phone_num   String    @db.VarChar(45)
-  bill        bill[]
+  flat_idflat Int
+  flat        flat      @relation(fields: [flat_idflat], references: [idflat], onUpdate: Restrict, map: "fk_resident_flat")
   request     request[]
+
+  @@index([flat_idflat], map: "fk_resident_flat")
+}
+
+model flat {
+  idflat   Int        @id @default(autoincrement())
+  num      String     @unique(map: "num_UNIQUE") @db.VarChar(45)
+  bill     bill[]
+  resident resident[]
 }
