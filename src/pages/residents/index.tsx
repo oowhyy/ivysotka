@@ -18,8 +18,8 @@ import Button from '@mui/material/Button';
 
 import Link from "next/link";
 import Layout from "../../components/Layout";
-import NewResidentModal from "../../components/NewResidentModal";
 import { IResident } from "../../types";
+import NewResidentDialog from "../../components/NewResidentDialog";
 
 
 export default function Residents() {
@@ -79,7 +79,7 @@ export default function Residents() {
 			<Button variant="outlined" onClick={handleClickOpen}>
 				Добавить жильца
 			</Button>
-			<NewResidentModal
+			<NewResidentDialog
 				formData={residentFormData}
 				handleClose={handleClose}
 				handleSubmitForm={handleSubmitForm}

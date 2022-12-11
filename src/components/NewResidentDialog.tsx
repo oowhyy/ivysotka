@@ -15,7 +15,7 @@ interface ModalProps {
    open: boolean
 }
 
-const NewResidentModal = ({ formData, handleClose, handleSubmitForm, handleFormChange, open }: ModalProps) => {
+const NewResidentDialog = ({ formData, handleClose, handleSubmitForm, handleFormChange, open }: ModalProps) => {
    return (
       <Dialog open={open} onClose={handleClose}>
          <DialogTitle>Форма добавления жильца</DialogTitle>
@@ -81,4 +81,4 @@ const NewResidentModal = ({ formData, handleClose, handleSubmitForm, handleFormC
    )
 }
 
-export default NewResidentModal
+export default NewResidentDialog

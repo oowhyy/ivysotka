@@ -30,7 +30,7 @@ model bill_status {
 
 model request {
   idrequests                      Int            @id @default(autoincrement())
-  date                            DateTime       @db.DateTime(0)
+  date                            DateTime       @default(now()) @db.DateTime(0)
   title                           String         @default("no title") @db.VarChar(200)
   description                     String         @db.LongText
   request_status_idrequest_status Int

@@ -1,6 +1,6 @@
 import Layout from "../../components/Layout";
 import { GetServerSideProps } from 'next'
-import { IResident } from "../../types/types";
+import { IResident } from "../../types";
 export default function ResidentPage({ resident }: { resident: IResident }) {
 	return (
 		<Layout>

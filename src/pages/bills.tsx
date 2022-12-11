@@ -1,8 +1,10 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import axios from "axios";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Layout from "../components/Layout";
+
 interface Bill {
 	idbills: number,
 	date: string,
@@ -27,6 +29,7 @@ export default function Bills({ activeBills, archiveBills }: BillsProps) {
 
 	const router = useRouter();
 	const [bills, setBills] = useState(activeBills)
+
 	function handleRouting(param: string) {
 		router.push({ pathname: '/bills', query: { status: param } }, undefined, { shallow: true })
 		if (param == 'archive') {
@@ -38,6 +41,7 @@ export default function Bills({ activeBills, archiveBills }: BillsProps) {
 	return (
 		<Layout>
 			<div>Задолженности</div>
+
 			<Button onClick={() => { handleRouting('current') }} >Текущие</Button>
 			<Button onClick={() => { handleRouting('archive') }} >Архив</Button>
 			<TableContainer component={Paper}>
