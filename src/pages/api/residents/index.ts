@@ -24,10 +24,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		// return await ResidentController.getAll(req, res);
 		case 'POST':
 			const { body: data } = req;
-			const newUser = await prisma.resident.create({
-				data
+			const flat = await prisma.flat.upsert({
+				where: { num: data.flat_num },
+				update: {},
+				create: { num: data.flat_num },
 			})
-			return res.status(201).json(newUser)
+
+			console.log(flat)
+			const newResident = await prisma.resident.create({
+				data: {
+					name: data.name,
+					email: data.email,
+					phone_num: data.phone_num,
+					flat_idflat: flat.idflat
+				}
+			})
+			return res.status(201).json(newResident)
+		// return res.json('ok')
 
 		// return await ResidentController.create(req, res);
 

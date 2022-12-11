@@ -21,18 +21,18 @@ import Layout from "../../components/Layout";
 import { IResident } from "../../types";
 import NewResidentDialog from "../../components/NewResidentDialog";
 
+const columns = [
+	{ field: 'name', headerName: 'ФИО', flex: 2 },
+	{ field: 'email', headerName: 'Email', flex: 2 },
+	{ field: 'phone_num', headerName: 'Телефон', flex: 1 },
+	{ field: 'flat_num', headerName: 'Номер квартиры', flex: 1 },
+]
 
 export default function Residents() {
 	const [residentList, setResidentList] = useState<IResident[]>([])
 	const [fetchError, setFetchError] = useState<string | null>('Загрузка')
 	const [open, setOpen] = useState(false);
 	const [residentFormData, setResidentFormData] = useState({ name: '', email: '', phone_num: '', flat_num: '' })
-	const columns = useMemo(() => [
-		{ field: 'name', headerName: 'ФИО', flex: 2 },
-		{ field: 'email', headerName: 'Email', flex: 2 },
-		{ field: 'phone_num', headerName: 'Телефон', flex: 1 },
-		{ field: 'flat_num', headerName: 'Номер квартиры', flex: 1 },
-	], [])
 
 	useEffect(() => {
 		fetchResidents();
@@ -76,7 +76,7 @@ export default function Residents() {
 
 	return (
 		<Layout >
-			<Button variant="outlined" onClick={handleClickOpen}>
+			<Button variant="outlined" onClick={handleClickOpen} style={{ marginTop: '20px' }}>
 				Добавить жильца
 			</Button>
 			<NewResidentDialog
@@ -94,8 +94,8 @@ export default function Residents() {
 					getRowId={(row) => row.id}
 					rowHeight={60}
 					columns={columns}
-					pageSize={5}
-					rowsPerPageOptions={[5]}
+					pageSize={6}
+					rowsPerPageOptions={[6]}
 					disableSelectionOnClick
 				/>
 			</div>

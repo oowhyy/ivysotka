@@ -20,9 +20,9 @@ const NewResidentDialog = ({ formData, handleClose, handleSubmitForm, handleForm
       <Dialog open={open} onClose={handleClose}>
          <DialogTitle>Форма добавления жильца</DialogTitle>
          <DialogContent>
-            <DialogContentText>
+            {/* <DialogContentText>
                Подзаголовок
-            </DialogContentText>
+            </DialogContentText> */}
             <TextField
                autoFocus
                margin="dense"

@@ -40,7 +40,7 @@ export default function Bills({ activeBills, archiveBills }: BillsProps) {
 	}
 	return (
 		<Layout>
-			<div>Задолженности</div>
+			<h1 >Задолженности</h1>
 
 			<Button onClick={() => { handleRouting('current') }} >Текущие</Button>
 			<Button onClick={() => { handleRouting('archive') }} >Архив</Button>
