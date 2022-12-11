@@ -1,6 +1,7 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import Layout from "../components/Layout";
 interface Bill {
 	idbills: number,
@@ -12,7 +13,7 @@ interface Bill {
 	bill_status: string,
 }
 interface BillsProps {
-	allBills: Bill[]
+	activeBills: Bill[]
 	archiveBills: Bill[]
 }
 
@@ -22,39 +23,49 @@ const bill_status = {
 	2: 'активно',
 	3: 'просрочено'
 }
-export default function Bills({ allBills, archiveBills }: BillsProps) {
+export default function Bills({ activeBills, archiveBills }: BillsProps) {
+
 	const router = useRouter();
+	const [bills, setBills] = useState(activeBills)
 	function handleRouting(param: string) {
 		router.push({ pathname: '/bills', query: { status: param } }, undefined, { shallow: true })
+		if (param == 'archive') {
+			setBills(archiveBills)
+		} else {
+			setBills(activeBills)
+		}
 	}
 	return (
 		<Layout>
 			<div>Задолженности</div>
-			<button onClick={() => { handleRouting('all') }} >active</button>
-			<button onClick={() => { handleRouting('archive') }} >active</button>
+			<Button onClick={() => { handleRouting('current') }} >Текущие</Button>
+			<Button onClick={() => { handleRouting('archive') }} >Архив</Button>
 			<TableContainer component={Paper}>
 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
 					<TableHead>
 						<TableRow>
 
-							<TableCell align="right">Название</TableCell>
-							<TableCell align="right">Дата создания</TableCell>
-							<TableCell align="right">Дата оплаты</TableCell>
-							<TableCell align="right">Квартира</TableCell>
-							<TableCell>Статус</TableCell>
+							<TableCell align="left">Название</TableCell>
+							<TableCell align="left">Дата создания</TableCell>
+							<TableCell align="left">Дата оплаты</TableCell>
+							<TableCell align="left">Квартира</TableCell>
+							<TableCell align="left">Сумма</TableCell>
+
+							<TableCell align="left"><b>Статус</b></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{allBills.map((row) => (
+						{bills.map((row) => (
 							<TableRow
 								key={row.idbills}
 							// sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 							>
 								<TableCell component="th" scope="row">{row.title}</TableCell>
-								<TableCell align="right">{row.date}</TableCell>
-								<TableCell align="right">{row.due_date}</TableCell>
-								<TableCell align="right">{row.flat}</TableCell>
-								<TableCell align="right">{row.bill_status}</TableCell>
+								<TableCell align="left">{row.date}</TableCell>
+								<TableCell align="left">{row.due_date}</TableCell>
+								<TableCell align="left">{row.flat}</TableCell>
+								<TableCell align="left">{row.total}</TableCell>
+								<TableCell align="left"><b>{row.bill_status}</b></TableCell>
 							</TableRow>
 						))}
 					</TableBody>
@@ -66,12 +77,11 @@ export default function Bills({ allBills, archiveBills }: BillsProps) {
 
 export async function getServerSideProps() {
 	// Fetch data from external API
-	const allBills = await axios.get('http://localhost:3000/api/bills')
+	const { data: activeBills } = await axios.get('http://localhost:3000/api/bills?status=активно&status=просрочено')
 	const { data: archiveBills } = await axios.get('http://localhost:3000/api/bills?status=оплачено')
-	console.log(allBills.data)
 	// console.log(typeof archiveBills)
 
 
 	// Pass data to the page via props
-	return { props: { allBills: allBills.data } }
+	return { props: { activeBills, archiveBills } }
 }

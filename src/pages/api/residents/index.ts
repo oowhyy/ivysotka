@@ -8,8 +8,18 @@ import prisma from '../../../db/client';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	switch (req.method) {
 		case 'GET':
-			const residents = await prisma.resident.findMany()
-			return res.json(residents)
+			const residents = await prisma.resident.findMany({ include: { flat: true } })
+			const formated = residents.map((resident) => {
+				const obj = {
+					id: resident.idresidents,
+					name: resident.name,
+					email: resident.email,
+					phone_num: resident.phone_num,
+					flat_num: resident.flat.num
+				}
+				return obj;
+			})
+			return res.json(formated)
 		// return res.json(users)
 		// return await ResidentController.getAll(req, res);
 		case 'POST':

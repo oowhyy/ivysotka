@@ -1,10 +1,11 @@
 
-import { IResident } from "../../types/types";
 
 
-import { ChangeEvent, useEffect, useState } from "react";
+
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 import ResidentService from "../../server/services/ResidentService";
+import { DataGrid } from '@mui/x-data-grid';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,15 +15,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+
 import Link from "next/link";
 import Layout from "../../components/Layout";
 import NewResidentModal from "../../components/NewResidentModal";
+import { IResident } from "../../types";
 
 
 export default function Residents() {
@@ -30,6 +27,13 @@ export default function Residents() {
 	const [fetchError, setFetchError] = useState<string | null>('Загрузка')
 	const [open, setOpen] = useState(false);
 	const [residentFormData, setResidentFormData] = useState({ name: '', email: '', phone_num: '', flat_num: '' })
+	const columns = useMemo(() => [
+		{ field: 'name', headerName: 'ФИО', flex: 2 },
+		{ field: 'email', headerName: 'Email', flex: 2 },
+		{ field: 'phone_num', headerName: 'Телефон', flex: 1 },
+		{ field: 'flat_num', headerName: 'Номер квартиры', flex: 1 },
+	], [])
+
 	useEffect(() => {
 		fetchResidents();
 	}, [])
@@ -46,7 +50,7 @@ export default function Residents() {
 
 	const handleSubmitForm = async () => {
 		setOpen(false);
-		const newResident = { idresidents: 'auto', ...residentFormData }
+		const newResident: IResident = { id: 'auto', ...residentFormData }
 		setResidentFormData({ name: '', email: '', phone_num: '', flat_num: '' })
 		await ResidentService.create(newResident);
 		fetchResidents();
@@ -83,45 +87,20 @@ export default function Residents() {
 				open={open}
 			/>
 			<h1>Список жильцов</h1>
-			{
-				residentList.length ?
-					(<TableContainer component={Paper}>
-						<Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-							<TableHead>
-								<TableRow>
-									<TableCell>id</TableCell>
-									<TableCell align="right">name</TableCell>
-									<TableCell align="right">email</TableCell>
-									<TableCell align="right">options</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{residentList.map((row) => (
-									<TableRow
-										key={row.idresidents}
-										sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-									>
-										<TableCell component="th" scope="row">{row.idresidents}</TableCell>
 
-										<TableCell align="right"><Link href={`/residents/${row.idresidents}`}>{row.name}</Link></TableCell>
-										<TableCell align="right">{row.email}</TableCell>
-										<TableCell align="right">
-											<Button
-												disableElevation
-												variant="contained"
-												onClick={() => handleDeleteResident(row.idresidents)}
-											>
-												Удалить
-											</Button>
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					</TableContainer>)
-					: 'Загрузка...'}
+			<div style={{ height: '500px' }} >
+				<DataGrid
+					rows={residentList}
+					getRowId={(row) => row.id}
+					rowHeight={60}
+					columns={columns}
+					pageSize={5}
+					rowsPerPageOptions={[5]}
+					disableSelectionOnClick
+				/>
+			</div>
 
-		</Layout>
+		</Layout >
 
 
 	)

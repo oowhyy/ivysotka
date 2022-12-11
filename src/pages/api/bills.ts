@@ -6,28 +6,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		case 'GET':
 			const status = req.query.status;
 			//console.log(status)
-			if (typeof status == 'string') {
-				const dbStatus = await prisma.bill_status.findFirst({ where: { status: status } })
-				if (dbStatus) {
-
-					const result = await prisma.bill.findMany({ where: { bill_status_idbill_status: dbStatus.idbill_status } })
-					return res.json(result)
-				}
-				return res.json({ message: `no status ${status} found` })
+			if (!status) {
+				return res.json({ message: 'no status params' })
 			}
-			const allBills = await prisma.bill.findMany({
-				select: {
-					idbills: true,
-					date: true,
-					due_date: true,
+			let statusArr: string[];
+			if (typeof status === 'string') {
+				statusArr = [status]
+			} else {
+				statusArr = [...status]
+			}
+			const statuses = await prisma.bill_status.findMany({
+				where: { status: { in: statusArr } }
+			})
+
+
+			const selected = statuses.map((s) => s.idbill_status)
+			const bills = await prisma.bill.findMany({
+				where: {
+					bill_status_idbill_status: { in: selected }
+				},
+				include: {
 					bill_status: true,
-					title: true,
-					total: true,
-					flat: true,
+					flat: true
 				}
 			})
-			const returnArr: any = []
-			allBills.forEach(bill => {
+			// return res.json({ message: `no status ${status} found` })
+
+
+
+			const formated = bills.map(bill => {
 				const obj = {
 					idbills: bill.idbills,
 					date: bill.date.toDateString(),
@@ -37,10 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					total: bill.total,
 					flat: bill.flat.num,
 				}
-				returnArr.push(obj)
+				return obj;
 			})
 			// console.log(allBills)
-			return res.json(returnArr)
+			return res.json(formated)
 		// return res.json(users)
 		// return await ResidentController.getAll(req, res);
 		case 'POST':
