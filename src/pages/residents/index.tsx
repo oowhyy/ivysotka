@@ -1,22 +1,7 @@
-
-
-
-
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
-
 import ResidentService from "../../server/services/ResidentService";
 import { DataGrid } from '@mui/x-data-grid';
-
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-
-import Link from "next/link";
 import Layout from "../../components/Layout";
 import { IResident } from "../../types";
 import NewResidentDialog from "../../components/NewResidentDialog";
@@ -55,11 +40,11 @@ export default function Residents() {
 		await ResidentService.create(newResident);
 		fetchResidents();
 	}
-	const handleDeleteResident = async (id?: string) => {
-		// console.log(id)
-		const res = await ResidentService.deleteOne(id)
-		fetchResidents();
-	}
+	// const handleDeleteResident = async (id?: string) => {
+	// 	// console.log(id)
+	// 	const res = await ResidentService.deleteOne(id)
+	// 	fetchResidents();
+	// }
 
 	function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
 		setResidentFormData({ ...residentFormData, [e.target.id]: e.target.value })

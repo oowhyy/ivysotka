@@ -1,8 +1,5 @@
 import { DataGrid, GridEventListener } from "@mui/x-data-grid";
 import axios from "axios";
-import { GetServerSideProps } from "next";
-import { handleWebpackExternalForEdgeRuntime } from "next/dist/build/webpack/plugins/middleware-plugin";
-import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
 import NewRequestDialog from "../components/NewRequestDialog";
@@ -50,7 +47,6 @@ export default function Requests({ residentNames }: requestProps) {
 		}
 		fetchData();
 	}
-
 	const handleRowClick: GridEventListener<'rowClick'> = (params) => {
 		setRequestId(Number(params.id))
 		handelOpen();
@@ -58,12 +54,10 @@ export default function Requests({ residentNames }: requestProps) {
 	async function fetchData() {
 		const { data } = await axios.get('/api/requests')
 		setRequests(data)
-		// console.log(data)
-		// setResidentList(res)
 	}
 	return (
 		<Layout>
-			<div>Заявки</div>
+			<h1>Заявки</h1>
 			{oldDialogOpen ?
 				<RequestDialog
 					requestId={requestId}
@@ -85,16 +79,11 @@ export default function Requests({ residentNames }: requestProps) {
 		</Layout>
 	)
 }
-
 export async function getServerSideProps() {
-
 	// Fetch data from external API
 	const resp = await axios.get('http://localhost:3000/api/residents')
 	const data: IResident[] = resp.data
 	const resindentNames = data.map(resident => { return { name: resident.name, id: resident.id } })
-
-
-
 	// Pass data to the page via props
 	return { props: { residentNames: resindentNames } }
 }

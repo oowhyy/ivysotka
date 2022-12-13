@@ -35,9 +35,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return res.status(201).json(newRequest)
 
 		// return await ResidentController.create(req, res);
-
-
-
 		default:
 			res.status(400).json({ message: 'error' })
 			break

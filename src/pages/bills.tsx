@@ -1,6 +1,5 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import axios from "axios";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Layout from "../components/Layout";
@@ -17,13 +16,6 @@ interface Bill {
 interface BillsProps {
 	activeBills: Bill[]
 	archiveBills: Bill[]
-}
-
-
-const bill_status = {
-	1: 'оплачено',
-	2: 'активно',
-	3: 'просрочено'
 }
 export default function Bills({ activeBills, archiveBills }: BillsProps) {
 

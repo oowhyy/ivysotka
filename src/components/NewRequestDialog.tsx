@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Autocomplete } from '@mui/material';
 import { ChangeEvent, SyntheticEvent, useState } from 'react';
@@ -55,13 +54,10 @@ export default function NewRequestDialog({ residentNames, handleFormSubmit }: an
 				onClick={handleClickOpen}>
 				Новая заявка
 			</Button>
+
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>Новая заявка</DialogTitle>
 				<DialogContent>
-					{/* <DialogContentText>
-						To subscribe to this website, please enter your email address here. We
-						will send updates occasionally.
-					</DialogContentText> */}
 					<TextField
 						autoFocus
 						margin="dense"
@@ -77,9 +73,7 @@ export default function NewRequestDialog({ residentNames, handleFormSubmit }: an
 						disablePortal
 						id="resident"
 						value={chosenResident}
-						// options={residentNames.map((r: { id: number, name: string }) => r.name)}
 						options={residentNames}
-						// sx={{ width: 300 }}
 						renderInput={(params) => <TextField {...params} label="Жилец" />}
 						getOptionLabel={(option) => option.name}
 						onChange={handleResidentChange}

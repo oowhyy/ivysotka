@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		case 'GET':
 			{
 				const request = await prisma.request.findUnique({ where: { idrequests: parsedID }, include: { resident: true } })
-				if (!request) return res.json({ message: 'not fouasdasnd' })
+				if (!request) return res.json({ message: 'not found' })
 				const formated = {
 					id: request.idrequests,
 					date: request.date.toLocaleDateString(),

@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const status = req.query.status;
 			//console.log(status)
 			if (!status) {
-				return res.json({ message: 'no status params' })
+				return res.status(400).json({ message: 'no status params' })
 			}
 			let statusArr: string[];
 			if (typeof status === 'string') {
@@ -18,8 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const statuses = await prisma.bill_status.findMany({
 				where: { status: { in: statusArr } }
 			})
-
-
 			const selected = statuses.map((s) => s.idbill_status)
 			const bills = await prisma.bill.findMany({
 				where: {
@@ -30,10 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					flat: true
 				}
 			})
-			// return res.json({ message: `no status ${status} found` })
-
-
-
 			const formated = bills.map(bill => {
 				const obj = {
 					idbills: bill.idbills,
